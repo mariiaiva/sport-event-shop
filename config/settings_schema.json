@@ -1,0 +1,47 @@
+[
+  {
+    "name": "Theme settings",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_feature",
+        "label": "Enable custom feature"
+      }
+    ]
+  },
+  {
+    "name": "Theme info",
+    "settings": [
+      {
+        "type": "text",
+        "id": "theme_name",
+        "label": "Theme Name",
+        "default": "My Custom Theme"
+      },
+      {
+        "type": "text",
+        "id": "theme_version",
+        "label": "Theme Version",
+        "default": "1.0.0"
+      },
+      {
+        "type": "text",
+        "id": "theme_author",
+        "label": "Author",
+        "default": "Your Name or Company"
+      },
+      {
+        "type": "url",
+        "id": "theme_documentation_url",
+        "label": "Documentation URL",
+        "default": "https://example.com/docs"
+      },
+      {
+        "type": "url",
+        "id": "theme_support_url",
+        "label": "Support URL",
+        "default": "https://example.com/support"
+      }
+    ]
+  }
+]

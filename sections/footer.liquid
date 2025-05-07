@@ -1,0 +1,191 @@
+<footer class="footer-main">
+  <div class="footer-content">
+    <div class="footer-subscribe">
+      <h3>Subscribe to the newsletter</h3>
+      <form method="post" action="/contact#contact_form" id="contact_form" accept-charset="UTF-8" class="contact-form">
+        <input type="hidden" name="form_type" value="customer">
+        <input type="hidden" name="utf8" value="✓">
+        <input type="email" name="contact[email]" placeholder="Your email address" required>
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+
+    <div class="footer-social">
+      <h3>We are on social media</h3>
+      <div>
+        <div class="icons">
+          <img src="{{ 'instagram.svg' | asset_url }}" width="40" height="40" alt="Instagram">
+          <img src="{{ 'facebook.svg' | asset_url }}" width="40" height="40" alt="Instagram">
+          <img src="{{ 'tiktok.svg' | asset_url }}" width="40" height="40" alt="Instagram">
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-contact">
+      <h3>Contacts</h3>
+      <p>Email: support@example.com</p>
+      <p>Phone: +38 (099) 123-45-67</p>
+      <p>Address: Lviv, Lazarenka St. 45</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+.footer-main {
+    background-color: {{ section.settings.background }};
+    color: {{ section.settings.text_color }};
+    padding: 50px 20px;
+    font-family: 'Arial', sans-serif;
+  }
+
+  .footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: auto;
+    gap: 40px;
+  }
+
+  .footer-subscribe,
+  .footer-social,
+  .footer-contact {
+    flex: 1 1 300px;
+    min-width: 260px;
+    text-align: center;
+  }
+
+  .footer-subscribe input[type="email"] {
+    padding: 10px;
+    width: calc(100% - 130px);
+    max-width: 300px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 4px;
+  }
+
+  .footer-subscribe button {
+    padding: 10px 15px;
+    background-color: #0073e6;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .footer-subscribe button:hover {
+    background-color: #005bb5;
+  }
+
+  .footer-social-icons {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    text-align: center;
+    gap: 15px;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .footer-contact p {
+    margin: 5px 0;
+  }
+
+  @media screen and (max-width: 768px) {
+    .footer-content {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .footer-subscribe input[type="email"] {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .footer-subscribe button {
+      width: 100%;
+    }
+
+    .footer-social-icons {
+      justify-content: center;
+    }
+  }
+</style>
+{% schema %}
+{
+"name": "Footer",
+"settings": [
+{
+"type": "color",
+"id": "background",
+"label": "Background",
+"default": "#000000"
+},
+{
+"type": "color",
+"id": "text_color",
+"label": "Text Color",
+"default": "#ffffff"
+}
+],
+"blocks": [
+{
+"type": "social",
+"name": "Social Link",
+"settings": [
+{
+"type": "text",
+"id": "text",
+"label": "Platform Name",
+"default": "Instagram"
+},
+{
+"type": "url",
+"id": "link",
+"label": "Link"
+},
+{
+"type": "text",
+"id": "icon",
+"label": "SVG filename (e.g. instagram.svg)",
+"default": "instagram.svg"
+}
+]
+}
+],
+"presets": [
+{
+"name": "Footer with social icons",
+"category": "Footer",
+"blocks": [
+{
+"type": "social",
+"settings": {
+"text": "Instagram",
+"link": "https://instagram.com",
+"icon": "instagram.svg"
+}
+},
+{
+"type": "social",
+"settings": {
+"text": "Facebook",
+"link": "https://facebook.com",
+"icon": "facebook.svg"
+}
+},
+{
+"type": "social",
+"settings": {
+"text": "tiktok",
+"link": "https://tiktok.com",
+"icon": "tiktok.svg"
+}
+}
+]
+}
+]
+}
+{% endschema %}

@@ -1,0 +1,317 @@
+<div class="event-product-section">
+  <div class="event-product-wrapper">
+    <div class="event-product-left">
+      <img src="{{ product.featured_image | img_url: '800x' }}" alt="{{ product.title }}" />
+    </div>
+
+    <div class="event-product-right">
+      <h1 class="event-title">{{ product.title }}</h1>
+      <div class="event-description">{{ product.description }}</div>
+      <div class="event-price" id="dynamic-price">{{ product.price | money }}</div>
+
+      <div class="variant-selectors">
+        <div class="variant-group">
+          <label for="event-type">Event Type</label>
+          <select id="event-type" class="styled-select"></select>
+        </div>
+        <div class="variant-group">
+          <label for="event-date">Event Date</label>
+          <select id="event-date" class="styled-select"></select>
+        </div>
+        <div class="variant-group">
+          <label for="event-time">Event Time</label>
+          <select id="event-time" class="styled-select"></select>
+        </div>
+      </div>
+
+      <form id="customer-form" class="customer-form">
+        <input type="text" name="first_name" placeholder="First Name *" required>
+        <input type="text" name="last_name" placeholder="Last Name *" required>
+        <input type="email" name="email" placeholder="Email *" required>
+        <input type="tel" name="phone" placeholder="Phone Number *" required>
+        <input type="text" name="zip" placeholder="ZIP Code *" required>
+        <input type="date" name="birthdate" required>
+        <select name="gender" required>
+          <option value="">Select Gender *</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
+        <input type="text" name="user_code" placeholder="User Code (optional)">
+      </form>
+
+      <button id="checkout-button" type="button" class="event-checkout-button">Proceed to Checkout</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const variants = {{ product.variants | json }};
+  function parseVariantTitle(title) {
+    const parts = title.split(' / ');
+    return {
+      type: parts[0]?.trim(),
+      date: parts[1]?.trim(),
+      time: parts[2]?.trim()
+    };
+  }
+
+  const variantOptions = variants.map(v => ({
+    id: v.id,
+    price: v.price,
+    ...parseVariantTitle(v.title)
+  }));
+
+  const selectors = {
+    type: document.getElementById('event-type'),
+    date: document.getElementById('event-date'),
+    time: document.getElementById('event-time')
+  };
+
+  function populateTypes() {
+    const types = [...new Set(variantOptions.map(v => v.type))];
+    selectors.type.innerHTML = types.map(t => `<option value="${t}">${t}</option>`).join('');
+  }
+
+  function updateSelectors() {
+    const selectedType = selectors.type.value;
+    const filteredByType = variantOptions.filter(v => v.type === selectedType);
+    const dates = [...new Set(filteredByType.map(v => v.date))];
+    selectors.date.innerHTML = dates.map(d => `<option value="${d}">${d}</option>`).join('');
+    updateTimes();
+    updatePrice();
+  }
+
+  function updateTimes() {
+    const selectedType = selectors.type.value;
+    const selectedDate = selectors.date.value;
+    const filtered = variantOptions.filter(v => v.type === selectedType && v.date === selectedDate);
+    const times = [...new Set(filtered.map(v => v.time))];
+    selectors.time.innerHTML = times.map(t => `<option value="${t}">${t}</option>`).join('');
+  }
+
+  function updatePrice() {
+    const type = selectors.type.value;
+    const date = selectors.date.value;
+    const time = selectors.time.value;
+    const selected = variantOptions.find(v => v.type === type && v.date === date && v.time === time);
+    if (selected) {
+      document.getElementById('dynamic-price').textContent = (selected.price / 100).toFixed(2) + ' UAH';
+      document.getElementById('checkout-button').setAttribute('data-variant-id', selected.id);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    populateTypes();
+    updateSelectors();
+    selectors.type.addEventListener('change', updateSelectors);
+    selectors.date.addEventListener('change', () => {
+      updateTimes();
+      updatePrice();
+    });
+    selectors.time.addEventListener('change', updatePrice);
+  });
+
+  document.getElementById('checkout-button').addEventListener('click', () => {
+    const form = document.getElementById('customer-form');
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+    const variantId = document.getElementById('checkout-button').getAttribute('data-variant-id');
+    if (!variantId) {
+      alert('Please select a valid variant combination.');
+      return;
+    }
+    const checkoutUrl = `/cart/${variantId}:1`;
+    window.location.href = checkoutUrl;
+  });
+</script>
+
+<style>
+  .event-product-section {
+    background: #f8fafc;
+    padding: 4rem 2rem;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .event-product-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    padding: 2rem 3rem;
+  }
+
+  .event-product-left {
+    flex: 1 1 45%;
+  }
+
+  .event-product-left img {
+    width: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .event-product-right {
+    flex: 1 1 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .event-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    text-align: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .event-description {
+    font-size: 1rem;
+    color: #4b5563;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  .event-price {
+    font-size: 1.75rem;
+    color: #ef4444;
+    font-weight: bold;
+    text-align: center;
+    margin: 1rem 0;
+  }
+
+  .variant-selectors .variant-group {
+    margin-bottom: 1rem;
+  }
+
+  .variant-selectors label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    color: #374151;
+  }
+
+  .styled-select {
+    width: 100%;
+    padding: 0.7rem;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background-color: #fff;
+    font-size: 1rem;
+  }
+
+  .customer-form input,
+  .customer-form select {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    font-size: 1rem;
+  }
+
+  .event-checkout-button {
+    padding: 0.9rem 2rem;
+    background: #129544;
+    border: none;
+    color: white;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .event-checkout-button:hover {
+    background: #129544;
+  }
+
+  @media (max-width: 768px) {
+    .event-product-wrapper {
+      flex-direction: column;
+      padding: 2rem;
+    }
+
+    .event-title {
+      font-size: 2rem;
+    }
+
+    .event-price {
+      font-size: 1.5rem;
+    }
+  }
+</style>
+
+{% schema %}
+{
+"name": "Event Product",
+"settings": [],
+"blocks": [
+{
+"type": "field",
+"name": "Form Field",
+"settings": [
+{
+"type": "text",
+"id": "label",
+"label": "Field Label",
+"default": "First Name"
+},
+{
+"type": "select",
+"id": "field_type",
+"label": "Field Type",
+"default": "text",
+"options": [
+{ "value": "text", "label": "Text" },
+{ "value": "email", "label": "Email" },
+{ "value": "tel", "label": "Phone" },
+{ "value": "date", "label": "Date" },
+{ "value": "select", "label": "Select" }
+]
+},
+{
+"type": "text",
+"id": "placeholder",
+"label": "Placeholder",
+"default": "Enter your value"
+},
+{
+"type": "checkbox",
+"id": "required",
+"label": "Required",
+"default": true
+}
+]
+}
+],
+"presets": [
+{
+"name": "Event Product Section",
+"blocks": [
+{ "type": "field", "settings": { "label": "First Name", "field_type": "text", "placeholder": "First Name", "required":
+true } },
+{ "type": "field", "settings": { "label": "Last Name", "field_type": "text", "placeholder": "Last Name", "required":
+true } },
+{ "type": "field", "settings": { "label": "Email", "field_type": "email", "placeholder": "Email", "required": true } },
+{ "type": "field", "settings": { "label": "Phone", "field_type": "tel", "placeholder": "Phone Number", "required": true
+} },
+{ "type": "field", "settings": { "label": "ZIP Code", "field_type": "text", "placeholder": "ZIP Code", "required": true
+} },
+{ "type": "field", "settings": { "label": "Birthdate", "field_type": "date", "placeholder": "", "required": true } }
+]
+}
+]
+}
+{% endschema %}

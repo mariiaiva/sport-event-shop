@@ -1,0 +1,130 @@
+<section class="more-info">
+  <div class="overlay"></div>
+  <div class="more-info-wrapper">
+    {%- if section.settings.text != blank -%}
+    <h1>WELCOME TO THE EVENT SIGN-UP</h1>
+    {%- else -%}
+    <h1>{{ block.settings.text | escape }}</h1>
+    {%- endif -%}
+
+    {%- if section.settings.text2 != blank -%}
+    <p>
+      Unleash your potential! Join us for an unforgettable sports event filled with energy, competition, and fun.
+      Whether you're running a marathon or joining a group workout — this is your time to shine!
+    </p>
+    {%- else -%}
+    <p>
+      {{ block.settings.text2 | escape }}
+    </p>
+    {%- endif -%}
+
+    <a href="/collections/all" class="shop-button">All products</a>
+  </div>
+</section>
+
+<style>
+  .more-info {
+    position: relative;
+    background-image: url('https://www.mvk.if.ua/uploads/posts/2021-11/1636364704_orig_421395.jpg');
+    background-size: cover;
+    background-position: center;
+
+    color: {
+        {
+        section.settings.text_color
+      }
+    }
+
+    ;
+    display: flex;
+    justify-content: center;
+    padding: 80px 20px;
+    overflow: hidden;
+  }
+
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+  }
+
+  .more-info-wrapper {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 600px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .more-info-wrapper h1 {
+    font-size: 42px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: white;
+  }
+
+  .more-info-wrapper p {
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    color: white;
+  }
+
+  .shop-button {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: white;
+    color: black;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+
+  .shop-button:hover {
+    background-color: rgb(185, 185, 185);
+    color: black;
+  }
+</style>
+
+{% schema %}
+{
+"name": "More-info",
+"settings": [
+{
+"type": "color",
+"id": "background",
+"label": "Background",
+"default": "#F4F4F4"
+},
+{
+"type": "color",
+"id": "text_color",
+"label": "Text Color",
+"default": "#ffffff"
+},
+{
+"type": "text",
+"id": "text",
+"label": "Heading",
+"default": "WELCOME TO THE EVENT SIGN-UP"
+},
+{
+"type": "text",
+"id": "text2",
+"label": "Subtext",
+"default": "Join us for an unforgettable experience!"
+}
+],
+"presets": [
+{
+"name": "More Info with Background"
+}
+]
+}
+{% endschema %}
